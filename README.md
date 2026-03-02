@@ -12,6 +12,7 @@
 - `/database` - SQL схемы
 
 ## Как запустить backend
+
 - Из корня проекта:
   - `docker compose up -d` — поднимает PostgreSQL (`project_management`, пользователь `postgres/postgres`)
 - Из папки `/server`:

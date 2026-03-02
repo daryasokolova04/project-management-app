@@ -1,0 +1,134 @@
+.navbar-custom {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  padding: 0.75rem 1rem;
+}
+
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #ffffff !important;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.navbar-brand-text {
+  color: #ffffff;
+}
+
+.nav-link-custom {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.nav-link-custom:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff !important;
+}
+
+.btn-nav {
+  background-color: #ffffff;
+  color: #fbfcfd !important;
+  border: none;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  border-radius: 8px;
+  margin-left: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-nav:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.user-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.user-name {
+  white-space: nowrap;
+}
+
+.dropdown-arrow {
+  font-size: 0.625rem;
+  margin-left: 0.25rem;
+  opacity: 0.8;
+}
+
+.user-dropdown-menu .dropdown-menu {
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.user-dropdown-menu .dropdown-item {
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.logout-item {
+  color: #dc3545 !important;
+}
+
+.logout-item:hover {
+  background-color: #fee2e2 !important;
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.9)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Fix for dropdown toggle */
+.navbar .nav-link.dropdown-toggle::after {
+  display: none;
+}
