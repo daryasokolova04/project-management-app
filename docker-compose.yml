@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: pm_postgres
+    container_name: ksp_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: project_management
@@ -13,11 +13,30 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./database/migrations/0001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql:ro
       - ./database/seeds/0001_seed.sql:/docker-entrypoint-initdb.d/002_seed.sql:ro
+    networks:
+      - local_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d project_management"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  app:
+    build: ./server/
+    container_name: ksp_django_app
+    environment:
+      POSTGRES_HOST: postgres
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - local_net
+
 volumes:
   postgres_data:
+
+networks:
+  local_net:
+    driver: bridge
