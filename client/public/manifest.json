@@ -1,0 +1,15 @@
+{
+  "short_name": "Проекты",
+  "name": "Система управления проектами",
+  "icons": [
+    {
+      "src": "project_Icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1a73e8",
+  "background_color": "#ffffff"
+}
