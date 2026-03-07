@@ -13,6 +13,8 @@ router.register(r"users", UserViewSet, basename="user")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    path('api/projects/', include('projects.urls')),
+    path('api/stages/', include('stages.urls')),
     path("api/auth/token/", drf_authtoken_views.obtain_auth_token, name="api-token-auth"),
 
     # Swagger/OpenAPI
