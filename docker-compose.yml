@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: pm_postgres
+    container_name: ksp_postgres
     restart: unless-stopped
     environment:
       POSTGRES_DB: project_management
@@ -10,14 +10,37 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ksp_postgres_volume:/var/lib/postgresql/data
       - ./database/migrations/0001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql:ro
       - ./database/seeds/0001_seed.sql:/docker-entrypoint-initdb.d/002_seed.sql:ro
+    networks:
+      - ksp_local_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d project_management"]
       interval: 10s
       timeout: 5s
       retries: 5
 
+  app:
+    build: ./server/
+    container_name: ksp_django_app
+    environment:
+      POSTGRES_HOST: postgres
+      # Django admin
+      DJANGO_SUPERUSER_USERNAME: ${DJANGO_SUPERUSER_USERNAME:-admin}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-admin@example.com}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-adminpass}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ksp_local_network
+
 volumes:
-  postgres_data:
+  ksp_postgres_volume:
+
+networks:
+  ksp_local_network:
+    driver: bridge

@@ -1,24 +1,17 @@
-# Project Management App
+# Django Backend
 
-Клиент-серверное приложение для управления проектами.
+Серверная часть приложения по управлению проектами
 
-## Стек
-- Backend: Django + DRF + PostgreSQL
-- Frontend: React + TypeScript + Bootstrap
+## Как запустить backend
+Предварительно запустить БД из корня проекта: \
+`docker compose up -d postgres` — поднимает PostgreSQL (`project_management`, пользователь `postgres/postgres`)
 
-## Структура
-- `/server` - backend
-- `/client` - frontend
-- `/database` - SQL схемы
-
-## Как запустить приложение
-- Из корня проекта:
-  - `docker compose up -d` — поднимает PostgreSQL (`project_management`, пользователь `postgres/postgres`)
-- Из папки `/server`:
-  1. Активировать виртуальное окружение (если ещё не активно): `source venv/bin/activate`
+Затем из папки `/server`:
+  1. Установить зависимости `pip install -r requirements.txt`
   2. Применить миграции: `python manage.py migrate`
   3. (Опционально) создать суперпользователя: `python manage.py createsuperuser`
   4. Запустить сервер: `python manage.py runserver 0.0.0.0:8000`
+
 
 ### Модуль пользователей и аутентификации
 - Кастомная модель пользователя: `users_app.User` (расширяет `AbstractUser`)
@@ -35,19 +28,7 @@
   - username: `admin`
   - password: `adminpass`
   - email: `admin@example.com`
+  - креды можно поменять через `.env` файл
 - Через админку можно:
   - создавать и редактировать пользователей (`users_app.User`)
   - проверять роли (`role`) и доп. поля (`competencies`, `portfolio`)
-
-### Swagger UI
-Ознакомиться с API бэкенда и протестировать его можно через интерфейс Swagger \
-Доступен на ручке `/api/docs/`
-
-## Как запустить приложение
-Из корня проекта: `docker compose up -d` \
-Поднимает 
-- PostgreSQL (`project_management`, пользователь `postgres/postgres`)
-- Django app
-
-Фронт запускается отдельно \
-_TODO: запаковать в контейнер и добавить в compose_
