@@ -17,6 +17,8 @@ urlpatterns = [
     path('api/stages/', include('stages.urls')),
 	path('api/teams/', include('teams.urls')), 
 	path('api/', include('tasks.urls')),
+    path('api/', include('finance.urls')),
+    path('api/', include('reports.urls')),
     path("api/auth/token/", drf_authtoken_views.obtain_auth_token, name="api-token-auth"),
 
     # Swagger/OpenAPI

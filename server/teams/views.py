@@ -11,7 +11,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     """
     ViewSet для управления командами проекта.
     """
-    queryset = Team.objects.all().select_related('project').prefetch_related('members__user')
+    queryset = Team.objects.all().select_related('project').prefetch_related('membership_details__user')
     serializer_class = TeamSerializer
     permission_classes = [permissions.IsAuthenticated]
 
