@@ -6,6 +6,7 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
-CMD python manage.py migrate && \
-    python manage.py createsuperuser --noinput && \
+CMD python manage.py makemigrations --noinput && \
+    python manage.py migrate --noinput && \
+    python manage.py createsuperuser --noinput 2>/dev/null || true && \
     python manage.py runserver 0.0.0.0:8000
