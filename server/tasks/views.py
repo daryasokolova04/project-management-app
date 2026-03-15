@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiPara
 from .models import Task
 from stages.models import ProjectStage
 from .serializers import TaskSerializer, TaskCreateUpdateSerializer
+from notifications import send_task_assignment_notification
 
 
 @extend_schema_view(
@@ -81,7 +82,15 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         stage_id = self.kwargs.get('stage_id')
         stage = get_object_or_404(ProjectStage, pk=stage_id)
-        serializer.save(stage=stage)
+        task = serializer.save(stage=stage)
+        if task.assignee_id:
+            send_task_assignment_notification(task)
+
+    def perform_update(self, serializer):
+        previous_assignee_id = self.get_object().assignee_id
+        task = serializer.save()
+        if task.assignee_id and task.assignee_id != previous_assignee_id:
+            send_task_assignment_notification(task)
 
     @extend_schema(
         description="Взять задачу в работу (назначить исполнителя и перевести в IN_PROGRESS)",
@@ -126,6 +135,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task.assignee_id = user_id
         task.status = 'IN_PROGRESS'
         task.save()
+        send_task_assignment_notification(task)
 
         return Response(TaskSerializer(task).data)
 

@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions
 from .models import Project
 from .serializers import ProjectSerializer
 from .permissions import IsProjectOwnerOrReadOnly
+from notifications import send_project_created_notification
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -15,4 +16,5 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Project.objects.filter(customer=user)
     
     def perform_create(self, serializer):
-        serializer.save(customer=self.request.user)
+        project = serializer.save(customer=self.request.user)
+        send_project_created_notification(project)

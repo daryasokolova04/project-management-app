@@ -1,19 +1,22 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-class User(models.Model):
+class User(AbstractUser):
     class Role(models.TextChoices):
         CUSTOMER = 'CUSTOMER', 'Customer'
         FREELANCER = 'FREELANCER', 'Freelancer'
         ADMIN = 'ADMIN', 'Administrator'
-    user_id = models.BigAutoField(primary_key=True, db_column="user_id")
-    email = models.CharField(max_length=255, unique=True)
+    id = models.AutoField(primary_key=True, db_column='user_id')
+    email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
-    password_hash = models.TextField()
     role = models.CharField(
         max_length=255,
         choices=Role.choices,
         default=Role.CUSTOMER,
     )
+
+    competencies = models.TextField(blank=True, null=True)
+    portfolio = models.URLField(blank=True, null=True)
 
     class Meta:
         db_table = "users"
@@ -44,9 +47,10 @@ class Project(models.Model):
         User,
         on_delete=models.RESTRICT,
         db_column="customer_id",
-        to_field="user_id",
+        to_field="id",
         related_name="projects",
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = "projects"
@@ -133,6 +137,7 @@ class Team(models.Model):
         through_fields=('team', 'user'),
         related_name='teams'
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
 
     class Meta:
         db_table = "teams"
@@ -159,7 +164,7 @@ class Task(models.Model):
         User,
         on_delete=models.RESTRICT,
         db_column="assignee_id",
-        to_field="user_id",
+        to_field="id",
         null=True,
         blank=True,
         related_name="tasks",
@@ -171,6 +176,8 @@ class Task(models.Model):
         to_field="project_stage_id",
         related_name="tasks",
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
     class Meta:
         db_table = "tasks"
@@ -181,8 +188,16 @@ class Task(models.Model):
 
 
 class TeamMember(models.Model):
+    class Role(models.TextChoices):
+        DEVELOPER = "DEVELOPER", "Developer"
+        TESTER = "TESTER", "Tester"
+        LEAD = "LEAD", "Lead"
     team_member_id = models.BigAutoField(primary_key=True, db_column="team_member_id")
-    role_in_team = models.CharField(max_length=255)
+    role_in_team = models.CharField(
+        max_length=255,
+        choices=Role.choices,
+        verbose_name="Роль в команде"
+    )
     team = models.ForeignKey(
         Team,
         on_delete=models.RESTRICT,
@@ -194,9 +209,11 @@ class TeamMember(models.Model):
         User,
         on_delete=models.RESTRICT,
         db_column="user_id",
-        to_field="user_id",
+        to_field="id",
         related_name="team_memberships",
     )
+    joined_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+
 
     class Meta:
         db_table = "team_members"

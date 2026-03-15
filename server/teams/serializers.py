@@ -11,24 +11,24 @@ class TeamMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMember
         fields = [
-            'id', 'team', 'user', 'user_username', 'user_email', 'user_role',
+            'team_member_id', 'team', 'user', 'user_username', 'user_email', 'user_role',
             'role_in_team', 'joined_at'
         ]
-        read_only_fields = ['id', 'joined_at']
+        read_only_fields = ['team_member_id', 'joined_at']
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    members = TeamMemberSerializer(many=True, read_only=True)
+    members = TeamMemberSerializer(many=True, read_only=True, source='membership_details')
     project_title = serializers.ReadOnlyField(source='project.title')
-    member_count = serializers.IntegerField(read_only=True)  # Изменено
+    member_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Team
         fields = [
-            'id', 'name', 'project', 'project_title',
+            'team_id', 'name', 'project', 'project_title',
             'members', 'member_count', 'created_at'
         ]
-        read_only_fields = ['id', 'created_at']
+        read_only_fields = ['team_id', 'created_at']
 
     def get_member_count(self, obj):
         return obj.members.count()

@@ -2,10 +2,20 @@ BEGIN;
 
 CREATE TABLE users (
   user_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  password VARCHAR(128) NOT NULL,
+  last_login TIMESTAMPTZ,
+  is_superuser BOOLEAN NOT NULL DEFAULT FALSE,
+  username VARCHAR(150) NOT NULL UNIQUE,
+  first_name VARCHAR(150) NOT NULL DEFAULT '',
+  last_name VARCHAR(150) NOT NULL DEFAULT '',
   email VARCHAR(255) NOT NULL UNIQUE,
+  is_staff BOOLEAN NOT NULL DEFAULT FALSE,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  date_joined TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   name VARCHAR(255) NOT NULL,
-  password_hash TEXT NOT NULL,
-  role VARCHAR(255) NOT NULL
+  role VARCHAR(255) NOT NULL,
+  competencies VARCHAR(255),
+  portfolio VARCHAR(255)
 );
 
 CREATE TABLE projects (
@@ -16,6 +26,7 @@ CREATE TABLE projects (
   status VARCHAR(255) NOT NULL,
   title VARCHAR(255) NOT NULL,
   customer_id BIGINT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
   CONSTRAINT fk_projects_customer
     FOREIGN KEY (customer_id) REFERENCES users(user_id)
     ON UPDATE CASCADE
@@ -27,7 +38,7 @@ CREATE INDEX idx_projects_customer_id_deadline ON projects(customer_id, deadline
 CREATE TABLE payment_records (
   payment_record_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   amount NUMERIC(20,2) NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   description TEXT,
   type VARCHAR(255) NOT NULL,
   project_id BIGINT NOT NULL,
@@ -58,6 +69,7 @@ CREATE TABLE teams (
   team_id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   name VARCHAR(255) NOT NULL,
   project_id BIGINT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
   CONSTRAINT fk_teams_project
     FOREIGN KEY (project_id) REFERENCES projects(project_id)
     ON UPDATE CASCADE
@@ -73,6 +85,8 @@ CREATE TABLE tasks (
   title VARCHAR(255) NOT NULL,
   assignee_id BIGINT,
   stage_id BIGINT NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
   CONSTRAINT fk_tasks_assignee
     FOREIGN KEY (assignee_id) REFERENCES users(user_id)
     ON UPDATE CASCADE
@@ -91,6 +105,7 @@ CREATE TABLE team_members (
   role_in_team VARCHAR(255) NOT NULL,
   team_id BIGINT NOT NULL,
   user_id BIGINT NOT NULL,
+  joined_at TIMESTAMP NOT NULL,
   CONSTRAINT fk_team_members_team
     FOREIGN KEY (team_id) REFERENCES teams(team_id)
     ON UPDATE CASCADE

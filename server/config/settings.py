@@ -19,13 +19,15 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     'drf_spectacular',
-    "project_management",
-    "users_app",
-    'projects',
-    'stages',
-	'teams', 
-	'tasks',  
-]
+      "project_management",
+      "users_app",
+      'projects',
+      'stages',
+  	'teams', 
+  	'tasks',  
+      "finance",
+      "reports",
+  ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -84,7 +86,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "users_app.User"
+AUTH_USER_MODEL = "project_management.User"
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
@@ -96,6 +98,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
 }
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@example.com"
 
 CORS_ALLOW_ALL_ORIGINS = True
 
