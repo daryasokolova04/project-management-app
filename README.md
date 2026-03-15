@@ -70,6 +70,4 @@
 Поднимает 
 - PostgreSQL (`project_management`, пользователь `postgres/postgres`)
 - Django app
-
-Фронт запускается отдельно \
-_TODO: запаковать в контейнер и добавить в compose_
+- Client app (3000 порт)
