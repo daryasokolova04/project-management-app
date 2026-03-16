@@ -1,0 +1,99 @@
+.reports-container {
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  max-width: 1400px;
+}
+
+.reports-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 2rem;
+}
+
+.filters-card {
+  border: none;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.filters-title {
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.project-report-card {
+  border: none;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+}
+
+.project-report-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.project-report-title {
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.project-report-details {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  color: #6c757d;
+}
+
+.detail-value {
+  font-weight: 600;
+}
+
+.progress-section {
+  margin-top: 1rem;
+}
+
+.progress {
+  height: 10px;
+  border-radius: 5px;
+}
+
+.progress-bar {
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .filters-card .row > div {
+    margin-bottom: 0.5rem;
+  }
+  
+  .filters-card .d-flex {
+    width: 100%;
+    justify-content: stretch;
+  }
+  
+  .filters-card .btn {
+    flex: 1;
+  }
+}

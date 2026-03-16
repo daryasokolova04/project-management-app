@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Alert, Card } from 'react-bootstrap';
-import { authAPI, RegisterRequest } from '../services/api';
 import axios from 'axios';
 import './Auth.css';
+import { RegisterRequest, authAPI } from 'src/services/auth';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState<RegisterRequest>({

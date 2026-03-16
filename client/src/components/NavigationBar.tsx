@@ -43,6 +43,21 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 <Nav.Link as={Link} to="/projects" className="nav-link-custom">
                   Проекты
                 </Nav.Link>
+                <Nav.Link as={Link} to="/stages" className="nav-link-custom">
+                  Этапы
+                </Nav.Link>
+                <Nav.Link as={Link} to="/tasks" className="nav-link-custom">
+                  Задачи
+                </Nav.Link>
+                <Nav.Link as={Link} to="/teams" className="nav-link-custom">
+                  Команды
+                </Nav.Link>
+                <Nav.Link as={Link} to="/payments" className="nav-link-custom">
+                  Платежи
+                </Nav.Link>
+                <Nav.Link as={Link} to="/reports" className="nav-link-custom">
+                  Отчеты
+                </Nav.Link>
               </>
             )}
           </Nav>

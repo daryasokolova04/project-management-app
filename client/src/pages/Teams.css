@@ -1,0 +1,122 @@
+.teams-container {
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.teams-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+}
+
+.team-card {
+  border: none;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.team-card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+}
+
+.team-name {
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.team-project {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  color: white;
+}
+
+.team-project strong {
+  color: white;
+  font-weight: 600;
+}
+
+.team-actions .btn-outline-primary,
+.team-actions .btn-outline-success,
+.team-actions .btn-outline-warning,
+.team-actions .btn-outline-danger {
+  background: white;
+  border: none;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+}
+
+.team-actions .btn-outline-primary:hover {
+  background: #667eea;
+  color: white;
+}
+
+.team-actions .btn-outline-success:hover {
+  background: #28a745;
+  color: white;
+}
+
+.team-actions .btn-outline-warning:hover {
+  background: #ffc107;
+  color: #1a1a2e;
+}
+
+.team-actions .btn-outline-danger:hover {
+  background: #dc3545;
+  color: white;
+}
+
+.members-title {
+  color: #1a1a2e;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .teams-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .team-card-header .d-flex {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .team-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+.roleinfo {
+	color: black
+}

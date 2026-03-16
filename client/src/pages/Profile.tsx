@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Badge } from 'react-bootstrap';
-import { authAPI, User } from '../services/api';
 import './Profile.css';
+import { User, authAPI } from 'src/services/auth';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
