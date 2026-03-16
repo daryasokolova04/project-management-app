@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Button } from 'react-bootstrap';
 import './Home.css';
+import { AuthContext } from 'src/App';
 
 const Home: React.FC = () => {
+  const { isAuthenticated } = useContext(AuthContext);
+  
   return (
     <Container className="home-container">
       <div className="home-content">
@@ -35,25 +38,33 @@ const Home: React.FC = () => {
             <span>Отслеживание прогресса</span>
           </div>
         </div>
-        <div className="home-buttons">
-          <Button 
-            variant="primary" 
-            size="lg" 
+        {!isAuthenticated && (
+          <div className="home-buttons">
+            <Button 
+              variant="primary" 
+              size="lg" 
+              href="/register"
+              className="home-btn-primary"
+            >
+              Начать работу
+            </Button>
+            <Button 
+              variant="outline-light" 
+              size="lg" 
+              href="/login"
+              className="home-btn-secondary"
+            >
+              Войти
+            </Button>
+          </div>
+        )}
 
-            href="/register"
-            className="home-btn-primary"
-          >
-            Начать работу
-          </Button>
-          <Button 
-            variant="outline-light" 
-            size="lg" 
-            href="/login"
-            className="home-btn-secondary"
-          >
-            Войти
-          </Button>
-        </div>
+        {isAuthenticated && (
+          <div className="home-welcome">
+            <h3>Добро пожаловать в систему!</h3>
+            <p>Перейдите в раздел <a className='link' href="/projects">Проекты</a> чтобы начать работу</p>
+          </div>
+        )}
       </div>
     </Container>
   );

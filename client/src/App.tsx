@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import './App.css';
 import NavigationBar from './components/NavigationBar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Register from './pages/Register';
+import Payments from './pages/Payments';
 import Profile from './pages/Profile';
-import Projects from './pages/Projects';
-import { authAPI } from './services/api';
-import './App.css';
+import ProjectsList from './pages/ProjectsList';
+import ProjectDetail from './pages/ProjectDetail';
+import Register from './pages/Register';
+import Reports from './pages/Reports';
+import Stages from './pages/Stages';
+import Tasks from './pages/Tasks';
+import Teams from './pages/Teams';
+import { authAPI } from './services/auth';
 
 // Auth context for sharing auth state
 export const AuthContext = React.createContext<{
@@ -47,7 +53,6 @@ function App() {
 
     checkAuth();
 
-    // Listen for storage changes (login/logout in other tabs)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'authToken') {
         if (e.newValue) {
@@ -109,10 +114,67 @@ function App() {
               path="/projects"
               element={
                 <ProtectedRoute>
-                  <Projects />
+                  <ProjectsList />
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/projects/:id"
+              element={
+                <ProtectedRoute>
+                  <ProjectDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payments"
+              element={
+                <ProtectedRoute>
+                  <Payments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/payments/project/:projectId"
+              element={
+                <ProtectedRoute>
+                  <Payments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <Reports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/stages"
+              element={
+                <ProtectedRoute>
+                  <Stages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <ProtectedRoute>
+                  <Tasks />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teams"
+              element={
+                <ProtectedRoute>
+                  <Teams />
+                </ProtectedRoute>
+              }
+            />
+
           </Routes>
         </div>
       </Router>
