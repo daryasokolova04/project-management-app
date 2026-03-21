@@ -200,7 +200,7 @@ class TeamMember(models.Model):
     )
     team = models.ForeignKey(
         Team,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
         db_column="team_id",
         to_field="team_id",
         related_name="membership_details",

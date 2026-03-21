@@ -133,8 +133,7 @@ const Stages: React.FC = () => {
     const statusMap: Record<string, { variant: string; text: string }> = {
       'PENDING': { variant: 'secondary', text: 'Ожидание' },
       'IN_PROGRESS': { variant: 'warning', text: 'В работе' },
-      'COMPLETED': { variant: 'success', text: 'Завершен' },
-      'ON_HOLD': { variant: 'info', text: 'Приостановлен' },
+      'DONE': { variant: 'success', text: 'Завершен' },
     };
     const statusInfo = statusMap[status] || { variant: 'light', text: status };
     return <Badge bg={statusInfo.variant}>{statusInfo.text}</Badge>;
@@ -256,7 +255,7 @@ const Stages: React.FC = () => {
           </thead>
           <tbody>
             {stages.map((stage) => {
-              
+              console.log('stage', stage)
               return (
                 <tr key={stage.project_stage_id}>
                   <td>{stage.project_stage_id}</td>
@@ -283,8 +282,7 @@ const Stages: React.FC = () => {
                       >
                         <option value="PENDING">Ожидание</option>
                         <option value="IN_PROGRESS">В работе</option>
-                        <option value="COMPLETED">Завершен</option>
-                        <option value="ON_HOLD">Приостановлен</option>
+                        <option value="DONE">Завершен</option>
                       </Form.Select>
                     ) : (
                       getStatusBadge(stage.status)
@@ -300,6 +298,8 @@ const Stages: React.FC = () => {
                           onClick={() => handleUpdateStage(stage.project_stage_id, {
                             name: selectedStage.name,
                             status: selectedStage.status,
+                            project: selectedStage.project,
+                            order_index: selectedStage.order_index
                           })}
                         >
                           Сохранить
@@ -322,13 +322,13 @@ const Stages: React.FC = () => {
                         >
                           Изменить
                         </Button>
-                        <Button
+              {    currentUser?.role === 'ADMIN'  &&   <Button
                           variant="danger"
                           size="sm"
-                          onClick={() => handleDeleteStage(stage.project_stage_id)}
+                          onClick={() => handleDeleteStage(stage.project)}
                         >
                           Удалить
-                        </Button>
+                        </Button>}
                       </>
                     )}
                   </td>

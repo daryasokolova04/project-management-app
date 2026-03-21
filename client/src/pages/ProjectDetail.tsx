@@ -174,7 +174,6 @@ const ProjectDetail: React.FC = () => {
       'CANCELLED': { variant: 'danger', text: 'Отменен' },
       // Stage statuses
       'PENDING': { variant: 'secondary', text: 'Ожидание' },
-      'ON_HOLD': { variant: 'info', text: 'Приостановлен' },
       // Payment types
       'BUDGET': { variant: 'success', text: 'Бюджет' },
       'EXPENSE': { variant: 'danger', text: 'Расход' },
@@ -235,9 +234,7 @@ const ProjectDetail: React.FC = () => {
           <div>
             <h2 className="project-detail-title">
               {project.title}
-              {myProject && (
-                <Badge bg="info" className="ms-3">Мой проект</Badge>
-              )}
+
             </h2>
             <p className="project-detail-customer mb-0">
               Заказчик: {project.customer_name || `ID: ${project.customer}`}
@@ -299,7 +296,6 @@ const ProjectDetail: React.FC = () => {
               <div className="stages-tab-content">
                 <div className="stages-header">
                   <h5 className="stages-title">Этапы проекта</h5>
-                  {myProject && (
                     <Button 
                       variant="primary" 
                       size="sm"
@@ -307,7 +303,6 @@ const ProjectDetail: React.FC = () => {
                     >
                       + Добавить этап
                     </Button>
-                  )}
                 </div>
 
                 {stages.length === 0 ? (
@@ -316,9 +311,7 @@ const ProjectDetail: React.FC = () => {
                       <div className="empty-stages-icon">📋</div>
                       <h6>Нет этапов</h6>
                       <p className="text-muted">
-                        {myProject 
-                          ? 'Добавьте первый этап проекта'
-                          : 'В этом проекте пока нет этапов'}
+                          {'Добавьте первый этап проекта'}
                       </p>
                     </Card.Body>
                   </Card>
@@ -348,19 +341,14 @@ const ProjectDetail: React.FC = () => {
                           </td>
                           <td>{getStatusBadge(stage.status, 'stage')}</td>
                           <td>
-                            {myProject ? (
                               <Button
                                 variant="danger"
                                 size="sm"
+                                disabled={myProject ?? false}
                                 onClick={() => handleDeleteStage(stage.project_stage_id)}
                               >
                                 Удалить
                               </Button>
-                            ) : (
-                              <Badge bg="secondary" className="p-2">
-                                Только просмотр
-                              </Badge>
-                            )}
                           </td>
                         </tr>
                       ))}
@@ -382,7 +370,7 @@ const ProjectDetail: React.FC = () => {
                     >
                       + Добавить платеж
                     </Button>
-                  )}
+                  )} 
                 </div>
 
                 {payments.length === 0 ? (
@@ -391,9 +379,9 @@ const ProjectDetail: React.FC = () => {
                       <div className="empty-payments-icon">💰</div>
                       <h6>Нет платежей</h6>
                       <p className="text-muted">
-                        {myProject 
-                          ? 'Добавьте первый платеж'
-                          : 'В этом проекте пока нет платежей'}
+                        {/* {myProject  */}
+                           {'Добавьте первый платеж'}
+                          {/* : 'В этом проекте пока нет платежей'} */}
                       </p>
                     </Card.Body>
                   </Card>
@@ -463,7 +451,7 @@ const ProjectDetail: React.FC = () => {
         </Card.Body>
       </Card>
 
-      {myProject && (
+      {/* {myProject && ( */}
         <>
           <CreateStageModal
             show={showCreateStageModal}
@@ -481,7 +469,7 @@ const ProjectDetail: React.FC = () => {
             projects={projects}
           />
         </>
-      )}
+      {/* )} */}
     </Container>
   );
 };

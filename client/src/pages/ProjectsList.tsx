@@ -237,6 +237,7 @@ const ProjectsList: React.FC = () => {
       )}
 
       <CreateProjectModal
+        currentUser={currentUser}
         show={showCreateModal}
         onHide={() => setShowCreateModal(false)}
         onSubmit={handleCreateProject}

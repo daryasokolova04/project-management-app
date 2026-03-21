@@ -16,7 +16,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
   onSubmit,
   team,
 }) => {
-  const { users, loading: loadingUsers } = useUsers();
+  const { users: allUsers, loading: loadingUsers } = useUsers();
   const [formData, setFormData] = useState<AddMemberData>({
     user_id: 0,
     role_in_team: 'DEVELOPER',
@@ -24,6 +24,8 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
+const users = allUsers.filter(user => user.role ==='FREELANCER')
   // Фильтруем пользователей, которые уже в команде
   const availableUsers = users.filter(user => {
     if (!team?.members) return true;

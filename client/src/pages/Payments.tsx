@@ -5,6 +5,7 @@ import PaymentModal from '../components/PaymentModal';
 import './Payments.css';
 import { Payment, paymentAPI, CreatePaymentData } from 'src/services/payment';
 import { Project, projectAPI } from 'src/services/project';
+import { authAPI, User } from 'src/services/auth';
 
 const Payments: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -15,7 +16,21 @@ const Payments: React.FC = () => {
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
-  
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  // Загружаем текущего пользователя
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const user = await authAPI.getProfile();
+        setCurrentUser(user);
+      } catch (err) {
+        console.error('Error fetching current user:', err);
+      }
+    };
+    fetchCurrentUser();
+  }, []);
+
   // Если projectId есть в URL, используем его, иначе выбираем первый проект
   const [selectedProjectId, setSelectedProjectId] = useState<string>(
     projectId || ''
@@ -151,6 +166,7 @@ const Payments: React.FC = () => {
         <Button 
           variant="primary" 
           onClick={() => setShowModal(true)}
+          disabled={currentUser?.id !== projects.find(pr => pr.project_id === Number(selectedProjectId))?.customer}
         >
           + Добавить платеж
         </Button>
@@ -196,13 +212,13 @@ const Payments: React.FC = () => {
             <p className="text-muted">
               В проекте "{selectedProject?.title}" пока нет платежей
             </p>
-            <Button 
+           {currentUser?.id === projects.find(pr => pr.project_id === Number(selectedProjectId))?.customer &&<Button 
               variant="primary" 
               onClick={() => setShowModal(true)}
               className="mt-2"
             >
               Добавить первый платеж
-            </Button>
+            </Button>}
           </Card.Body>
         </Card>
       ) : (
