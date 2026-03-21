@@ -27,6 +27,10 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectStageSerializer
     permission_classes = [permissions.IsAuthenticated, IsProjectOwnerOrReadOnly]
 
+    @staticmethod
+    def _is_admin(user):
+        return bool(getattr(user, "is_staff", False) or getattr(user, "role", None) == "ADMIN")
+
     def get_queryset(self):
         project_id = self.request.query_params.get('project_id')
         if not project_id:
@@ -37,5 +41,8 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
         except ValueError:
             raise ValidationError("project_id должен быть числом")
 
-        project = get_object_or_404(Project, pk=project_id, customer=self.request.user)
+        if self._is_admin(self.request.user) or getattr(self.request.user, "role", None) == "FREELANCER":
+            project = get_object_or_404(Project, pk=project_id)
+        else:
+            project = get_object_or_404(Project, pk=project_id, customer=self.request.user)
         return ProjectStage.objects.filter(project=project)

@@ -17,7 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action in ["register", "login"]:
             permission_classes = [permissions.AllowAny]
         elif self.action == "list":
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [permissions.IsAuthenticated]
         else:
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
