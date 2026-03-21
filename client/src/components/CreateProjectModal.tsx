@@ -7,12 +7,17 @@ interface CreateProjectModalProps {
   show: boolean;
   onHide: () => void;
   onSubmit: (data: CreateProjectData & { customer?: number }) => Promise<void>;
+  currentUser: {
+    id: number;
+    isAdmin?: boolean | undefined;
+  } | null
 }
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   show,
   onHide,
   onSubmit,
+  currentUser
 }) => {
   const { users, loading: usersLoading } = useUsers();
   const [formData, setFormData] = useState({
@@ -32,7 +37,12 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+
+  if (currentUser && (parseInt(formData.customer) !== currentUser.id && !currentUser.isAdmin)) {
+    alert('Вы не можете назначать владельцем проекта других пользователей');
+    return;
+  }
+  setLoading(true);
     try {
       const submitData = {
         title: formData.title,
@@ -116,23 +126,21 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Заказчик (необязательно)</Form.Label>
+            <Form.Label>Заказчик</Form.Label>
             <Form.Select 
               name="customer" 
               value={formData.customer} 
               onChange={handleChange}
               disabled={usersLoading}
+              required
             >
-              <option value="">Выберите заказчика (текущий пользователь по умолчанию)</option>
+              <option value="">Выберите заказчика</option>
               {users.map(user => (
                 <option key={user.id} value={user.id}>
                   {user.username} ({user.email})
                 </option>
               ))}
             </Form.Select>
-            <Form.Text className="text-muted">
-              Если не выбран, заказчиком будет текущий пользователь
-            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">

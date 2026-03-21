@@ -5,7 +5,7 @@ export interface Stage {
   name: string;
   description: string;
   order_index: number;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'ON_HOLD';
+  status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
   project: number;
   project_title?: string;
 }
@@ -14,7 +14,7 @@ export interface CreateStageData {
   name: string;
   description: string;
   order_index: number;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'ON_HOLD';
+  status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
   project: number;
 }
 

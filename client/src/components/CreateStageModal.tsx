@@ -179,8 +179,7 @@ const CreateStageModal: React.FC<CreateStageModalProps> = ({
             >
               <option value="PENDING">Ожидание</option>
               <option value="IN_PROGRESS">В работе</option>
-              <option value="COMPLETED">Завершен</option>
-              <option value="ON_HOLD">Приостановлен</option>
+              <option value="DONE">Завершен</option>
             </Form.Select>
           </Form.Group>
         </Modal.Body>
