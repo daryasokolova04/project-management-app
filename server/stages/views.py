@@ -3,6 +3,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
+from project_access import is_platform_admin, projects_queryset_for_user, user_can_access_project
 from projects.permissions import IsProjectOwnerOrReadOnly
 from .models import ProjectStage
 from projects.models import Project
@@ -28,34 +29,34 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectStageSerializer
     permission_classes = [permissions.IsAuthenticated, IsProjectOwnerOrReadOnly]
 
-    @staticmethod
-    def _is_admin(user):
-        return bool(getattr(user, "is_staff", False) or getattr(user, "role", None) == "ADMIN")
-
     def get_queryset(self):
-        # Получаем все стадии для начала
-        queryset = ProjectStage.objects.all()
-        
-        # Если есть project_id - фильтруем по нему
+        user = self.request.user
+        if is_platform_admin(user):
+            queryset = ProjectStage.objects.all()
+        elif getattr(user, "role", None) == "FREELANCER":
+            allowed_projects = projects_queryset_for_user(user)
+            queryset = ProjectStage.objects.filter(project__in=allowed_projects)
+        else:
+            queryset = ProjectStage.objects.filter(project__customer=user)
+
         project_id = self.request.query_params.get('project_id')
         if project_id:
             try:
                 project_id = int(project_id)
-                # Проверка прав на проект
-                if self._is_admin(self.request.user) or getattr(self.request.user, "role", None) == "FREELANCER":
-                    project = get_object_or_404(Project, pk=project_id)
-                else:
-                    project = get_object_or_404(Project, pk=project_id, customer=self.request.user)
-                queryset = queryset.filter(project=project)
             except ValueError:
                 raise ValidationError("project_id должен быть числом")
-        
+
+            project = get_object_or_404(Project, pk=project_id)
+            if not user_can_access_project(user, project):
+                raise PermissionDenied("Нет доступа к этапам этого проекта.")
+            queryset = queryset.filter(project=project)
+
         return queryset
     
     def perform_update(self, serializer):
         """При обновлении проверяем права"""
         stage = self.get_object()
-        if not self._is_admin(self.request.user):
+        if not is_platform_admin(self.request.user):
             # Проверяем, что пользователь является владельцем проекта
             if stage.project.customer != self.request.user:
                 raise PermissionDenied("У вас нет прав для изменения этого этапа")
@@ -63,7 +64,7 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
     
     def perform_destroy(self, instance):
         """При удалении проверяем права"""
-        if not self._is_admin(self.request.user):
+        if not is_platform_admin(self.request.user):
             if instance.project.customer != self.request.user:
                 raise PermissionDenied("У вас нет прав для удаления этого этапа")
         instance.delete()
@@ -73,11 +74,9 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
         project_id = self.request.data.get('project')
         if not project_id:
             raise ValidationError("Требуется поле project")
-        
-        # Проверяем права на создание этапа в проекте
-        if self._is_admin(self.request.user) or getattr(self.request.user, "role", None) == "FREELANCER":
-            project = get_object_or_404(Project, pk=project_id)
-        else:
-            project = get_object_or_404(Project, pk=project_id, customer=self.request.user)
-        
+
+        project = get_object_or_404(Project, pk=project_id)
+        if not (is_platform_admin(self.request.user) or project.customer == self.request.user):
+            raise PermissionDenied("Только заказчик или администратор может создавать этапы.")
+
         serializer.save(project=project)
