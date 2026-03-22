@@ -45,10 +45,10 @@ const Teams: React.FC = () => {
     const fetchProjects = async () => {
       try {
         const response = await projectAPI.getProjects();
-        // Если пользователь админ, показываем все проекты, иначе только свои
-        const userProjects = currentUser?.role === 'ADMIN' 
-          ? response.data 
-          : response.data.filter(p => p.customer === currentUser?.id);
+        const userProjects =
+          currentUser?.role === 'ADMIN' || currentUser?.role === 'FREELANCER'
+            ? response.data
+            : response.data.filter((p) => p.customer === currentUser?.id);
         setProjects(userProjects);
       } catch (err) {
         console.error('Error fetching projects:', err);

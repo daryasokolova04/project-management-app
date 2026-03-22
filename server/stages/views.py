@@ -3,7 +3,7 @@ from rest_framework import viewsets, permissions
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
-from project_access import is_platform_admin, projects_queryset_for_user, user_can_access_project
+from project_access import is_platform_admin, is_freelancer, projects_queryset_for_user, user_can_access_project
 from projects.permissions import IsProjectOwnerOrReadOnly
 from .models import ProjectStage
 from projects.models import Project
@@ -33,7 +33,7 @@ class ProjectStageViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if is_platform_admin(user):
             queryset = ProjectStage.objects.all()
-        elif getattr(user, "role", None) == "FREELANCER":
+        elif is_freelancer(user):
             allowed_projects = projects_queryset_for_user(user)
             queryset = ProjectStage.objects.filter(project__in=allowed_projects)
         else:
