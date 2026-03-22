@@ -11,6 +11,7 @@ interface User {
   id: number;
   username: string;
   email: string;
+  role?: string;
   role_in_team?: string;
 }
 
@@ -47,14 +48,16 @@ const Tasks: React.FC = () => {
     fetchCurrentUser();
   }, []);
 
-  // Загружаем проекты текущего пользователя
+  // Проекты с бэкенда уже ограничены по роли
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await projectAPI.getProjects();
-        // Фильтруем только проекты текущего пользователя
-        const myProjects = response.data.filter(p => p.customer === currentUser?.id);
-        setProjects(myProjects);
+        const list =
+          currentUser?.role === 'ADMIN' || currentUser?.role === 'FREELANCER'
+            ? response.data
+            : response.data.filter((p) => p.customer === currentUser?.id);
+        setProjects(list);
       } catch (err) {
         console.error('Error fetching projects:', err);
       }

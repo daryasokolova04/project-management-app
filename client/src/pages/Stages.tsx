@@ -36,15 +36,13 @@ const Stages: React.FC = () => {
     fetchCurrentUser();
   }, []);
 
-  // Загружаем ТОЛЬКО СВОИ проекты
+  // Список проектов полностью с бэкенда (роль и права учитываются на API)
   useEffect(() => {
     const fetchProjects = async () => {
       setLoadingProjects(true);
       try {
         const response = await projectAPI.getProjects();
-        // Фильтруем только проекты текущего пользователя
-        const myProjects = response.data.filter(p => p.customer === currentUser?.id);
-        setProjects(myProjects);
+        setProjects(response.data);
       } catch (err) {
         console.error('Error fetching projects:', err);
         setError('Не удалось загрузить список проектов');
@@ -151,24 +149,29 @@ const Stages: React.FC = () => {
     return (
       <Container className="stages-container text-center">
         <Spinner animation="border" variant="primary" />
-        <p className="mt-3">Загрузка ваших проектов...</p>
+        <p className="mt-3">Загрузка проектов...</p>
       </Container>
     );
   }
 
   if (projects.length === 0 && currentUser) {
+    const isFreelancer = currentUser.role === 'FREELANCER';
     return (
       <Container className="stages-container">
         <Card className="text-center p-5">
           <Card.Body>
             <div className="empty-state-icon">📋</div>
-            <h3>У вас нет проектов</h3>
+            <h3>{isFreelancer ? 'Нет доступных проектов' : 'У вас нет проектов'}</h3>
             <p className="text-muted">
-              Сначала создайте проект, чтобы управлять этапами
+              {isFreelancer
+                ? 'Вас ещё не добавили в команду проекта — этапы будут доступны после добавления'
+                : 'Сначала создайте проект, чтобы управлять этапами'}
             </p>
-            <Button variant="primary" href="/projects">
-              Перейти к проектам
-            </Button>
+            {!isFreelancer && (
+              <Button variant="primary" href="/projects">
+                Перейти к проектам
+              </Button>
+            )}
           </Card.Body>
         </Card>
       </Container>
@@ -184,7 +187,7 @@ const Stages: React.FC = () => {
         <Button 
           variant="primary" 
           onClick={() => setShowModal(true)}
-          disabled={projects.length === 0}
+          disabled={projects.length === 0 || currentUser?.role === 'FREELANCER'}
         >
           + Создать этап
         </Button>
@@ -193,7 +196,7 @@ const Stages: React.FC = () => {
       <Card className="filters-card mb-4">
         <Card.Body>
           <Form.Group>
-            <Form.Label>Выберите ваш проект</Form.Label>
+            <Form.Label>Выберите проект</Form.Label>
             <Form.Select 
               value={selectedProjectId} 
               onChange={(e) => setSelectedProjectId(e.target.value)}
@@ -202,7 +205,11 @@ const Stages: React.FC = () => {
               {projectOptions}
             </Form.Select>
             <Form.Text className="text-muted">
-              Вы можете управлять этапами только в своих проектах
+              {currentUser?.role === 'ADMIN'
+                ? 'Доступны все проекты платформы'
+                : currentUser?.role === 'FREELANCER'
+                  ? 'Проекты, в команде которых вы состоите; создавать и редактировать этапы может только заказчик или администратор'
+                  : 'Этапы можно менять только в своих проектах'}
             </Form.Text>
           </Form.Group>
         </Card.Body>
@@ -231,7 +238,12 @@ const Stages: React.FC = () => {
           <Card.Body>
             <div className="empty-state-icon">📋</div>
             <h3>Нет этапов</h3>
-            <p className="text-muted">Создайте первый этап для этого проекта</p>
+            <p className="text-muted">
+              {currentUser?.role === 'FREELANCER'
+                ? 'Этапы ещё не добавлены в этот проект'
+                : 'Создайте первый этап для этого проекта'}
+            </p>
+            {currentUser?.role !== 'FREELANCER' && (
             <Button 
               variant="primary" 
               onClick={() => setShowModal(true)}
@@ -239,6 +251,7 @@ const Stages: React.FC = () => {
             >
               Создать этап
             </Button>
+            )}
           </Card.Body>
         </Card>
       ) : (
@@ -254,9 +267,7 @@ const Stages: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {stages.map((stage) => {
-              console.log('stage', stage)
-              return (
+            {stages.map((stage) => (
                 <tr key={stage.project_stage_id}>
                   <td>{stage.project_stage_id}</td>
                   <td>
@@ -314,6 +325,7 @@ const Stages: React.FC = () => {
                       </>
                     ) : (
                       <>
+                        {currentUser?.role !== 'FREELANCER' && (
                         <Button
                           variant="warning"
                           size="sm"
@@ -322,19 +334,21 @@ const Stages: React.FC = () => {
                         >
                           Изменить
                         </Button>
-              {    currentUser?.role === 'ADMIN'  &&   <Button
+                        )}
+              {currentUser?.role === 'ADMIN' && (
+                        <Button
                           variant="danger"
                           size="sm"
-                          onClick={() => handleDeleteStage(stage.project)}
+                          onClick={() => handleDeleteStage(stage.project_stage_id)}
                         >
                           Удалить
-                        </Button>}
+                        </Button>
+              )}
                       </>
                     )}
                   </td>
                 </tr>
-              );
-            })}
+            ))}
           </tbody>
         </Table>
       )}
