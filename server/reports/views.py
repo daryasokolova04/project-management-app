@@ -1,4 +1,4 @@
-﻿from decimal import Decimal
+from decimal import Decimal
 
 from django.db.models import Count, Q, Sum
 from django.utils.dateparse import parse_date
@@ -7,6 +7,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiTypes
 from rest_framework.views import APIView
+from project_access import projects_queryset_for_user, user_can_access_project
 from project_management.models import Project, ProjectStage, PaymentRecord, Task
 from .serializers import (
     UserProjectReportSerializer,
@@ -45,20 +46,7 @@ class UserProjectReportView(APIView):
         responses=UserProjectReportSerializer,
     )
     def get(self, request):
-        queryset = Project.objects.all()
-
-        user = request.user
-        is_admin = False
-        if getattr(user, 'is_staff', False):
-            is_admin = True
-        elif getattr(user, 'role', None) == 'ADMIN':
-            is_admin = True
-
-        if not is_admin:
-            if hasattr(user, 'user_id'):
-                queryset = queryset.filter(customer_id=user.user_id)
-            else:
-                queryset = queryset.filter(customer=user)
+        queryset = projects_queryset_for_user(request.user)
 
         status_param = request.query_params.get('status')
         if status_param:
@@ -119,6 +107,9 @@ class ProjectFinanceReportView(APIView):
         except Project.DoesNotExist:
             raise NotFound('Project not found')
 
+        if not user_can_access_project(request.user, project):
+            raise NotFound('Project not found')
+
         payments_qs = PaymentRecord.objects.filter(project_id=project_id)
 
         date_from = request.query_params.get('date_from')
@@ -162,6 +153,14 @@ class ProjectStageReportView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, project_id):
+        try:
+            project = Project.objects.get(project_id=project_id)
+        except Project.DoesNotExist:
+            raise NotFound('Project not found')
+
+        if not user_can_access_project(request.user, project):
+            raise NotFound('Project not found')
+
         stages = ProjectStage.objects.filter(project_id=project_id).annotate(
             total_tasks=Count('tasks', distinct=True),
             completed_tasks=Count(

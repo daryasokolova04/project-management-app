@@ -1,10 +1,9 @@
 from rest_framework import permissions
 
-class IsProjectOwnerOrReadOnly(permissions.BasePermission):
-    @staticmethod
-    def _is_admin(user):
-        return bool(getattr(user, "is_staff", False) or getattr(user, "role", None) == "ADMIN")
+from project_access import is_platform_admin
 
+
+class IsProjectOwnerOrReadOnly(permissions.BasePermission):
     @staticmethod
     def _project_owner(obj):
         if hasattr(obj, "customer"):
@@ -18,7 +17,7 @@ class IsProjectOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
-        if self._is_admin(request.user):
+        if is_platform_admin(request.user):
             return True
         owner = self._project_owner(obj)
         return owner == request.user

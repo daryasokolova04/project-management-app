@@ -2,7 +2,9 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import PermissionDenied
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter, OpenApiExample, OpenApiTypes
+from project_access import user_can_access_project
 from .models import Task
 from stages.models import ProjectStage
 from .serializers import TaskSerializer, TaskCreateUpdateSerializer
@@ -59,6 +61,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         stage_id = self.kwargs.get('stage_id')
         stage = get_object_or_404(ProjectStage, pk=stage_id)
+        if not user_can_access_project(self.request.user, stage.project):
+            raise PermissionDenied("Нет доступа к задачам этого этапа.")
 
         queryset = Task.objects.filter(stage=stage).select_related('assignee', 'stage')
 
@@ -82,6 +86,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         stage_id = self.kwargs.get('stage_id')
         stage = get_object_or_404(ProjectStage, pk=stage_id)
+        if not user_can_access_project(self.request.user, stage.project):
+            raise PermissionDenied("Нет доступа к задачам этого этапа.")
         task = serializer.save(stage=stage)
         if task.assignee_id:
             send_task_assignment_notification(task)

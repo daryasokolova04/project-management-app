@@ -1,7 +1,9 @@
-﻿from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import permissions, viewsets
 from rest_framework.exceptions import PermissionDenied
-from project_management.models import PaymentRecord
+from project_access import is_platform_admin, user_can_access_project
+from project_management.models import PaymentRecord, Project
 from .serializers import PaymentRecordSerializer
 
 
@@ -14,6 +16,12 @@ class PaymentRecordViewSet(viewsets.ModelViewSet):
         project_id = self.kwargs.get('project_id')
         if project_id:
             queryset = queryset.filter(project_id=project_id)
+        else:
+            return PaymentRecord.objects.none()
+
+        project = get_object_or_404(Project, pk=project_id)
+        if not user_can_access_project(self.request.user, project):
+            raise PermissionDenied("Нет доступа к платежам этого проекта.")
         return queryset
 
     def perform_create(self, serializer):
@@ -22,15 +30,8 @@ class PaymentRecordViewSet(viewsets.ModelViewSet):
             raise PermissionDenied("Project is required.")
 
         user = self.request.user
-        is_owner = False
-        if hasattr(user, "user_id"):
-            is_owner = project.customer_id == user.user_id
-        else:
-            user_email = getattr(user, "email", None)
-            if user_email:
-                is_owner = project.customer.email == user_email
-
-        if not (is_owner or user.is_staff):
+        is_owner = project.customer_id == getattr(user, "pk", None)
+        if not (is_owner or is_platform_admin(user)):
             raise PermissionDenied("Only the project customer can create payments.")
 
         serializer.save(created_at=timezone.now())
